@@ -51,11 +51,13 @@ location ~ /config(\.example)?\.php$ {
 
 location ~ \.php$ {
     include snippets/fastcgi-php.conf;
-    fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
 }
 ```
 
-La directive `index` existe déjà : il suffit d'y ajouter `index.php` en tête. Le bloc `location ~ \.php$` est déjà présent en commentaire. Il faut décommenter la ligne `location`, la ligne `include snippets/fastcgi-php.conf;`, l'accolade fermante et **une seule** des deux lignes `fastcgi_pass`. Garder celle du socket, adaptée au fichier présent dans `ls /run/php/` (`php8.2-fpm.sock` sur Debian 12). Le bloc `deny all` doit venir avant lui, car nginx retient la première regex qui correspond. Ce `deny all` sur les fichiers de configuration empêche nginx de servir `config.php` en clair si PHP-FPM n'est pas branché. `index.php` les charge depuis le disque, il n'est donc pas concerné. Recharger ensuite avec `nginx -t && systemctl reload nginx`.
+La conf complète utilisée sur `ct-web` est dans [`../nginx/default`](../nginx/default) : il suffit de la copier dans `/etc/nginx/sites-available/default`.
+
+`php-fpm.sock` est un lien générique fourni par Debian vers le socket de la version installée (`php8.4-fpm.sock` sur Debian 13) : la conf reste valable après une montée de version de PHP. Si on part du fichier par défaut de Debian, garder **une seule** ligne `fastcgi_pass` (celle du socket). Le bloc `deny all` doit venir avant lui, car nginx retient la première regex qui correspond. Ce `deny all` sur les fichiers de configuration empêche nginx de servir `config.php` en clair si PHP-FPM n'est pas branché. `index.php` les charge depuis le disque, il n'est donc pas concerné. Recharger ensuite avec `nginx -t && systemctl reload nginx`.
 
 ### Apache
 
