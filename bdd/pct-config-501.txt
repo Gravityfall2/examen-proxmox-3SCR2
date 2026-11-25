@@ -1,0 +1,11 @@
+arch: amd64
+cores: 1
+features: nesting=1
+hostname: ct-db
+memory: 512
+net0: name=eth0,bridge=vmbr0,gw=172.30.0.254,hwaddr=BC:24:11:E5:C4:27,ip=172.30.0.104/24,type=veth
+onboot: 1
+ostype: debian
+rootfs: local-lvm:vm-501-disk-0,size=4G
+swap: 512
+unprivileged: 1
